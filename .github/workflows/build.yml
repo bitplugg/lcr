@@ -83,7 +83,14 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/android"
           cd "$GITHUB_WORKSPACE/android"
           repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-14.1
-          repo sync -c -j"$(nproc --all)" --force-sync --no-clone-bundle --no-tags
+          ok=0
+          for i in 1 2 3 4 5; do
+            if repo sync -c -j"$(nproc --all)" --force-sync --no-clone-bundle --no-tags \
+                 --retry-fetches=10 --fail-fast; then ok=1; break; fi
+            echo "::warning::repo sync attempt $i failed, retrying (network 503?)..."
+            sleep 30
+          done
+          [ "$ok" = 1 ] || { echo "repo sync failed after retries"; exit 1; }
           rm -rf .repo
           df -h
 

@@ -17,7 +17,10 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := false
 PRODUCT_ENFORCE_VINTF_MANIFEST := false
 
 # Properties
-TARGET_SYSTEM_PROP += $(LOCAL_PATH)/system.prop
+# NOTE: system.prop is auto-detected via $(TARGET_DEVICE_DIR)/system.prop.
+# Do NOT set TARGET_SYSTEM_PROP with $(LOCAL_PATH): the variable is expanded
+# lazily (by build/make/core/sysprop.mk) after LOCAL_PATH has been reset,
+# which corrupts the path.
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.hardware.keystore=sdm660 \

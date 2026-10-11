@@ -32,6 +32,16 @@ jobs:
           sudo apt-get clean
           df -h
 
+      - name: Create swap space
+        run: |
+          sudo swapoff -a || true
+          sudo rm -f /swapfile || true
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
+
       - name: Install build dependencies
         run: |
           sudo apt-get update

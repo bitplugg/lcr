@@ -54,6 +54,14 @@ jobs:
             openjdk-11-jdk unzip
           df -h
 
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ccache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            ccache-${{ runner.os }}-
+
       - name: Install repo tool
         run: |
           mkdir -p ~/bin
@@ -69,7 +77,7 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/android"
           cd "$GITHUB_WORKSPACE/android"
           repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-14.1
-          repo sync -j"$(nproc --all)" --force-sync --no-clone-bundle --no-tags
+          repo sync -c -j"$(nproc --all)" --force-sync --no-clone-bundle --no-tags
           df -h
 
       - name: Add LCR device tree, theme and scripts
@@ -105,10 +113,29 @@ jobs:
           cd "$GITHUB_WORKSPACE/android"
           export ALLOW_MISSING_DEPENDENCIES=true
           export LC_ALL=C
-          source build/envsetup.sh
+          export USE_CCACHE=1
+          export CCACHE_EXEC="$(command -v ccache)"
+          export CCACHE_DIR="$GITHUB_WORKSPACE/.ccache"
+          export CCACHE_COMPRESS=1
+          export CCACHE_MAXSIZE=3G
+          export NINJA_STATUS="[%f/%t %es] "
+          ccache -z || true
+          source build/envsetup.sh >/dev/null
           lunch twrp_lavender-ap2a-eng
-          mka recoveryimage -j"$(nproc --all)"
+          echo "::group::Recovery build"
+          mka recoveryimage -j"$(nproc --all)" > /tmp/build.log 2>&1 &
+          BID=$!
+          while kill -0 "$BID" 2>/dev/null; do
+            echo "[$(date -u +%T)] building... $(tail -n 1 /tmp/build.log | tr -d '\r')"
+            sleep 60
+          done
+          set +e
+          wait "$BID"; RC=$?
+          tail -n 400 /tmp/build.log
+          echo "::endgroup::"
+          ccache -s || true
           df -h
+          exit $RC
 
       - name: Locate and name the image
         id: artifact

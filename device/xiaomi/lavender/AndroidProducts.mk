@@ -8,4 +8,4 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/twrp_lavender.mk
 
 COMMON_LUNCH_CHOICES := \
-    twrp_lavender-eng
+    twrp_lavender-ap2a-eng

@@ -1,21 +1,19 @@
 # Magisk
 
-This folder is for optional Magisk flashable zips used by the LCR tool menu
-(`Advanced → Install Magisk (patch boot)`).
+Magisk is **bundled inside the LCR recovery ramdisk** ("LCR memory"), so you do
+not need an SD card or to download anything.
 
-## How it works
+At build time CI downloads the latest official Magisk package and places it at
+`/system/etc/lcr/Magisk.apk` inside the recovery image. The recovery tool
+`Advanced → Install Magisk (patch boot)` (or `lcr-magisk.sh` in the terminal)
+runs Magisk's own `boot_patch.sh` against the `boot` partition.
 
-The recovery ships `/system/bin/lcr-magisk.sh`, which:
-
-1. finds a `Magisk-*.zip` on `/sdcard` (or takes a path as argument), and
-2. runs Magisk's own `boot_patch.sh` against the `boot` partition.
-
-From the recovery **Terminal** you can also run it manually:
+Manual use from the recovery **Terminal**:
 
 ```
-lcr-magisk.sh /sdcard/Magisk-v27.0.zip
+lcr-magisk.sh                          # use the bundled Magisk
+lcr-magisk.sh /sdcard/Magisk-v27.0.apk # use your own package
 ```
 
-Put the Magisk zip on internal storage (or SD card) before booting recovery.
-No Magisk zip is bundled here (Magisk is GPL-licensed; grab the official one
-from https://github.com/topjohnwu/Magisk/releases).
+The bundled package is fetched from https://github.com/topjohnwu/Magisk/releases
+(Magisk is GPL-3.0). A user-supplied package on `/sdcard` always takes priority.

@@ -76,13 +76,27 @@ jobs:
           cd "$GITHUB_WORKSPACE/android"
           python3 scripts/apply_theme.py bootable/recovery
 
+      - name: Bundle Magisk into the recovery ramdisk
+        run: |
+          cd "$GITHUB_WORKSPACE/android"
+          DEST=device/xiaomi/lavender/recovery/root/system/etc/lcr
+          mkdir -p "$DEST"
+          URL=$(curl -s https://api.github.com/repos/topjohnwu/Magisk/releases/latest \
+                | grep -oE '"browser_download_url": *"[^"]+\.apk"' \
+                | head -1 | cut -d'"' -f4)
+          echo "Magisk package: $URL"
+          if [ -n "$URL" ]; then
+            curl -sL "$URL" -o "$DEST/Magisk.apk" || true
+          fi
+          ls -l "$DEST" || true
+
       - name: Build recovery image
         run: |
           cd "$GITHUB_WORKSPACE/android"
           export ALLOW_MISSING_DEPENDENCIES=true
           export LC_ALL=C
           source build/envsetup.sh
-          lunch twrp_lavender-eng
+          lunch twrp_lavender-ap2a-eng
           mka recoveryimage -j"$(nproc --all)"
           df -h
 

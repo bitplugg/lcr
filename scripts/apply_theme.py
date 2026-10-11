@@ -123,6 +123,17 @@ if "lcr_tools_btn" not in data:
 						<action function="set">tw_complete_text1={@lcr_done=Done}</action>
 						<action function="page">action_page</action>
 					</actions>
+				</listitem>
+				<listitem name="{@lcr_verity_btn=Remove dm-verity / forceencrypt}">
+					<actions>
+						<action function="set">tw_back=advanced</action>
+						<action function="set">tw_terminal_location=/sdcard</action>
+						<action function="set">tw_action=terminalcommand</action>
+						<action function="set">tw_action_param=/system/bin/lcr-verity.sh</action>
+						<action function="set">tw_action_text1={@lcr_verity_btn=Remove dm-verity / forceencrypt}</action>
+						<action function="set">tw_complete_text1={@lcr_done=Done}</action>
+						<action function="page">action_page</action>
+					</actions>
 				</listitem>"""
 
     data = data.replace(anchor, anchor + items)

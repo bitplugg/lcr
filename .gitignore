@@ -2,6 +2,7 @@
 out/
 *.img
 *.zip
+*.apk
 !magisk/*.zip
 
 # Editor / OS

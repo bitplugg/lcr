@@ -2,31 +2,36 @@
 #
 # LCR - Install / patch Magisk into the boot image.
 #
-# Usage: lcr-magisk.sh /path/to/Magisk-vXX.zip
+# Magisk is bundled inside the LCR ramdisk (in "LCR memory"), so no SD card
+# is required. A user-provided zip still wins if given.
 #
-# Requires a Magisk flashable zip (contains boot_patch.sh, magiskboot, ...).
+# Usage: lcr-magisk.sh [/path/to/Magisk.zip]
 #
 
 PATH=/sbin:/system/bin:/system/xbin:$PATH
 export PATH
 
-ZIP="$1"
 BOOT=/dev/block/bootdevice/by-name/boot
 WORK=/tmp/lcr-magisk
+BUNDLED_APK=/system/etc/lcr/Magisk.apk
+BUNDLED_ZIP=/system/etc/lcr/Magisk.zip
+
+ZIP="$1"
 
 if [ -z "$ZIP" ]; then
-    for z in /sdcard/Magisk*.zip /sdcard/Download/Magisk*.zip; do
+    for z in "$BUNDLED_ZIP" "$BUNDLED_APK" \
+             /sdcard/Magisk*.zip /sdcard/Download/Magisk*.zip /sdcard/Magisk*.apk; do
         [ -e "$z" ] && ZIP="$z" && break
     done
 fi
 
 if [ -z "$ZIP" ] || [ ! -e "$ZIP" ]; then
-    echo "LCR: Magisk zip not found. Put a Magisk-vXX.zip on /sdcard"
-    echo "     or run: lcr-magisk.sh /path/to/Magisk.zip"
+    echo "LCR: no bundled Magisk found and none on /sdcard."
+    echo "     usage: lcr-magisk.sh /path/to/Magisk.zip"
     exit 1
 fi
 
-echo "LCR: using Magisk zip: $ZIP"
+echo "LCR: using Magisk package: $ZIP"
 
 rm -rf "$WORK"
 mkdir -p "$WORK"
@@ -39,7 +44,7 @@ else
 fi
 
 if [ ! -f "$WORK/boot_patch.sh" ]; then
-    echo "LCR: boot_patch.sh not found in zip. Aborting."
+    echo "LCR: boot_patch.sh not found in package. Aborting."
     exit 1
 fi
 

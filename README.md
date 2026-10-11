@@ -13,10 +13,11 @@ Custom [TWRP](https://twrp.me)-based recovery for the **Xiaomi Redmi Note 7**
 |------|---------|
 | Recovery | TWRP 3.7.1_14 based, portrait theme, custom LCR splash/theme |
 | Decryption | FBE / FDE via QTI keymaster + gatekeeper (metadata decrypt) |
-| Magisk | `lcr-magisk.sh` patches the boot image from a Magisk zip |
-| Utilities | bash, nano, tar, xz, parted, ntfs-3g (in ramdisk) |
+| Magisk | Bundled in the ramdisk; `lcr-magisk.sh` patches the boot image (user zip optional) |
+| Utilities | bash, nano, tar, xz, parted, ntfs-3g, plus LCR shell tools (`lcr-*.sh`) |
 | Backup | `lcr-backup-efs.sh` dumps EFS / persist / modem / fsg / fsc |
-| Flash / EDL | `lcr-edl.sh` reboots to Qualcomm EDL (9008); fastbootd + ADB sideload |
+| Flash / EDL | `lcr-flash.sh`; `lcr-edl.sh` reboots to Qualcomm EDL (9008); fastbootd + ADB sideload |
+| Maintenance | `lcr-verity.sh`, `lcr-mountrw.sh`, `lcr-selinux.sh`, `lcr-wipe.sh`, `lcr-partitions.sh`, `lcr-kernel.sh` |
 | Device fixes | Touch, brightness, RTC, OTG, temperature, USB |
 | Tool menu | Advanced → **LCR Tools** (terminal) → `lcr-tools` |
 
@@ -60,7 +61,7 @@ python3 scripts/apply_theme.py bootable/recovery
 
 export ALLOW_MISSING_DEPENDENCIES=true
 source build/envsetup.sh
-lunch twrp_lavender-eng
+lunch twrp_lavender-ap2a-eng
 mka recoveryimage
 ```
 

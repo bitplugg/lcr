@@ -1,0 +1,7 @@
+# LCR (Lavender Custom Recovery) - interactive shell banner
+case "$-" in
+    *i*)
+        [ -x /system/bin/lcr-banner.sh ] && /system/bin/lcr-banner.sh
+        echo "LCR: type 'lcr-tools' for the LCR tools menu."
+        ;;
+esac

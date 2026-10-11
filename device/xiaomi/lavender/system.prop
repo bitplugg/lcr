@@ -1,0 +1,31 @@
+# LCR (Lavender Custom Recovery) - system properties
+
+# FUSE passthrough
+persist.sys.fuse.passthrough.enable=true
+
+# Device identity (runtime)
+ro.product.brand=xiaomi
+ro.product.name=lavender
+ro.product.device=lavender
+ro.product.mod_device=lavender_global
+ro.build.product=lavender
+ro.product.board=sdm660
+ro.board.platform=sdm660
+
+# USB gadget
+sys.usb.controller=a800000.dwc3
+sys.usb.rndis.func.name=rndis_bam
+sys.usb.rmnet.func.name=rmnet_bam
+
+# Crypto / keymaster (needed for FBE/FDE decryption)
+vendor.gatekeeper.disable_spu=true
+ro.boot.avb_version=1.0
+ro.boot.vbmeta.avb_version=1.0
+keymaster_ver=4.0
+ro.crypto.dm_default_key.options_format.version=2
+ro.crypto.volume.metadata.method=dm-default-key
+ro.crypto.volume.filenames_mode=aes-256-cts
+ro.crypto.volume.options=::v2
+
+# LCR
+ro.lcr.edition=LCR

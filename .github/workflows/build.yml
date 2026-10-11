@@ -106,19 +106,11 @@ jobs:
       - name: Patch TWRP sources for LCR
         run: |
           cd "$GITHUB_WORKSPACE/android"
-          python3 - <<'PY'
-          import re, sys
-          p = "system/security/keystore2/aidl/Android.bp"
-          s = open(p).read()
-          new, n = re.subn(
-              r'(name: "android\.security\.apc".*?ndk: \{\s*\n(\s*)enabled: true,)',
-              r'\1\n\2apps_enabled: false, // LCR: also emit -ndk_platform',
-              s, count=1, flags=re.S)
-          print("android.security.apc apps_enabled patch:", n)
-          if n != 1:
-              sys.exit("failed to patch android.security.apc aidl_interface")
-          open(p, "w").write(new)
-          PY
+          sed -i 's/-ndk_platform/-ndk/g' \
+            bootable/recovery/libtar/Android.mk \
+            bootable/recovery/Android.mk
+          echo "--- libtar deps ---"
+          grep -nE "android\.(security|system)" bootable/recovery/libtar/Android.mk
 
       - name: Apply LCR theme and splash
         run: |

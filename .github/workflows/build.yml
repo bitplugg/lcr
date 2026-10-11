@@ -42,7 +42,7 @@ jobs:
         run: |
           sudo swapoff -a || true
           sudo rm -f /swapfile || true
-          sudo fallocate -l 8G /swapfile
+          sudo fallocate -l 16G /swapfile
           sudo chmod 600 /swapfile
           sudo mkswap /swapfile
           sudo swapon /swapfile
@@ -133,11 +133,13 @@ jobs:
           export CCACHE_COMPRESS=1
           export CCACHE_MAXSIZE=3G
           export NINJA_STATUS="[%f/%t %es] "
+          export GOGC=20
+          export GOMAXPROCS=2
           ccache -z || true
           source build/envsetup.sh >/dev/null
           lunch twrp_lavender-ap2a-eng
           echo "::group::Recovery build"
-          mka recoveryimage -j"$(nproc --all)" > /tmp/build.log 2>&1 &
+          mka recoveryimage -j2 > /tmp/build.log 2>&1 &
           BID=$!
           while kill -0 "$BID" 2>/dev/null; do
             echo "[$(date -u +%T)] building... $(tail -n 1 /tmp/build.log | tr -d '\r')"

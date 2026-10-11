@@ -94,9 +94,11 @@ PLATFORM_VERSION := 16.1.0
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 
 # Encryption / decryption
-TW_INCLUDE_CRYPTO := true
-TW_INCLUDE_FBE_METADATA_DECRYPT := true
-BOARD_USES_QCOM_FBE_DECRYPTION := true
+# NOTE: TWRP's android-14.1 libtar still uses the legacy libfscrypt API
+# (fscrypt_policy union, get_policy*, lookup_ref_*) that system/vold 14.1 and
+# vendor/twrp/libfscrypt no longer provide, so crypto is disabled until that is
+# ported. Keep the ramdisk keymaster/decrypt bits; they are simply unused.
+TW_INCLUDE_CRYPTO := false
 TW_USE_FSCRYPT_POLICY := 2
 TW_FORCE_KEYMASTER_VER := true
 
